@@ -1,109 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estudio Creativo</title>
-  <link rel="stylesheet" href="./style.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script defer src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-  <script defer src="./script.js"></script>
-</head>
-<body class="bg-gray-900 text-white font-sans">
-  <!-- Header -->
-  <header class="p-4 bg-gray-800 fixed top-0 left-0 right-0 z-50 border-b border-white/10">
-    <nav class="max-w-6xl mx-auto flex justify-between items-center">
-      <span class="font-bold text-teal-400">LOGO</span>
-      <div class="space-x-4">
-        <a href="#hero" class="hover:text-teal-400">Hero</a>
-        <a href="#featured" class="hover:text-teal-400">Featured</a>
-        <a href="#about" class="hover:text-teal-400">About</a>
-      </div>
-    </nav>
-  </header>
+body { margin: 0; }
 
-  <main class="pt-20">
-    <!-- Hero -->
-    <section id="hero" class="h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      <div id="hero-canvas" class="absolute inset-0 -z-10"></div>
-      <div class="text-center px-4">
-        <h1 class="text-5xl sm:text-6xl font-extrabold mb-4">Beyond Visions</h1>
-        <p class="text-lg text-white/70 max-w-xl mx-auto">Creamos experiencias digitales que conectan con tu audiencia.</p>
-      </div>
-      <div class="absolute bottom-8 flex flex-col items-center text-white/60">
-        <span class="text-xs mb-2">Scroll</span>
-        <div class="h-10 w-6 border border-white/40 rounded-full flex items-start justify-center p-1">
-          <div class="h-2 w-2 bg-teal-400 rounded-full animate-bounce"></div>
-        </div>
-      </div>
-    </section>
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0a0f1c 0%, #000 100%);
+}
 
-    <!-- Featured Work -->
-    <section id="featured" class="py-24 max-w-6xl mx-auto px-4">
-      <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">Featured Work</h2>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=21" alt="Proyecto destacado 1" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span class="text-lg font-semibold text-teal-400">Proyecto 1</span>
-          </div>
-        </div>
-        <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=22" alt="Proyecto destacado 2" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span class="text-lg font-semibold text-teal-400">Proyecto 2</span>
-          </div>
-        </div>
-        <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=23" alt="Proyecto destacado 3" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span class="text-lg font-semibold text-teal-400">Proyecto 3</span>
-          </div>
-        </div>
-      </div>
-    </section>
+#hero-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
-    <!-- About -->
-    <section id="about" class="py-24 max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-bold mb-6">Sobre nuestro estudio</h2>
-        <p class="text-white/80 mb-4">
-          Combinamos diseño, 3D y desarrollo para crear experiencias digitales memorables; experimentación, detalle y narrativa en cada proyecto.
-        </p>
-        <p class="text-white/70">
-          Desde interfaces interactivas hasta entornos WebGL, diseñamos productos que se sienten vivos.
-        </p>
-      </div>
-      <div class="relative group">
-        <img src="https://picsum.photos/800/600?random=30" alt="Imagen del estudio" class="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105">
-        <div class="absolute inset-0 bg-teal-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-      </div>
-    </section>
-  </main>
+.featured-card { aspect-ratio: 4/3; }
 
-  <!-- Footer -->
-  <footer id="footer" class="bg-gray-900 border-t border-white/10 py-12">
-    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 items-center">
-      <div>
-        <span class="font-bold text-teal-400 text-lg">LOGO</span>
-        <p class="text-white/60 mt-2 text-sm">Creando experiencias digitales inmersivas.</p>
-      </div>
-      <nav class="flex flex-col space-y-2 text-sm">
-        <a href="#hero" class="hover:text-teal-400 transition">Inicio</a>
-        <a href="#featured" class="hover:text-teal-400 transition">Proyectos</a>
-        <a href="#about" class="hover:text-teal-400 transition">Sobre nosotros</a>
-      </nav>
-      <div class="flex space-x-4 justify-start md:justify-end">
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">Twitter</a>
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">Instagram</a>
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">LinkedIn</a>
-      </div>
-    </div>
-    <div class="mt-8 text-center text-xs text-white/50">
-      © <span id="year"></span> Estudio Creativo. Todos los derechos reservados.
-    </div>
-  </footer>
-</body>
-</html>
+/* Scroll indicator */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+.animate-bounce { animation: bounce 1.2s infinite; }
