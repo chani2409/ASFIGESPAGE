@@ -9,6 +9,7 @@ body {
   background-attachment: fixed;
   color: #fff;
   overflow-x: hidden;
+  position: relative;
 }
 
 /* Gradiente animado sutil */
@@ -18,7 +19,7 @@ body::before {
   inset: 0;
   background: radial-gradient(circle at 20% 30%, rgba(45, 212, 191, 0.08), transparent 70%),
               radial-gradient(circle at 80% 70%, rgba(56, 189, 248, 0.08), transparent 70%);
-  z-index: -1;
+  z-index: -2;
   animation: pulseBackground 12s ease-in-out infinite alternate;
 }
 
@@ -31,6 +32,15 @@ body::before {
     opacity: 1;
     transform: scale(1.1);
   }
+}
+
+/* Hero Canvas (fondo 3D) */
+#hero-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  mix-blend-mode: screen; /* integra el 3D con el gradiente */
+  opacity: 0.9;
 }
 
 /* === Hero === */
