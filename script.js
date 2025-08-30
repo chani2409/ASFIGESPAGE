@@ -87,16 +87,75 @@ function initHeroThree() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
-    75,
+    60,
     container.clientWidth / container.clientHeight,
     0.1,
     1000
   );
-  camera.position.z = 4;
+  camera.position.z = 5;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
+
+  // Luz ambiental y direccional
+  const ambientLight = new THREE.AmbientLight(0x00ffff, 0.4);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0x00ffff, 1);
+  dirLight.position.set(5, 5, 5);
+  scene.add(dirLight);
+
+  // Geometría de plano para el circuito
+  const geometry = new THREE.PlaneGeometry(10, 10, 40, 40);
+
+  // Material con líneas tipo neón
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x00ffff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.6
+  });
+
+  const plane = new THREE.Mesh(geometry, material);
+  scene.add(plane);
+
+  // Animación de parpadeo en la opacidad
+  let time = 0;
+
+  // Movimiento de cámara con el mouse
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // Rotación lenta del plano
+    plane.rotation.x = Math.sin(time * 0.5) * 0.05;
+    plane.rotation.y = Math.cos(time * 0.5) * 0.05;
+
+    // Parpadeo sutil
+    material.opacity = 0.5 + Math.sin(time * 3) * 0.1;
+
+    // Movimiento de cámara suave hacia el mouse
+    camera.position.x += (mouseX - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+
+    time += 0.01;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Ajuste en resize
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+}
 
   // Icosaedro wireframe
   const geometry = new THREE.IcosahedronGeometry(1.5, 1);
