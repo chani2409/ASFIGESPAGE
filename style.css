@@ -12,4 +12,6 @@ body {
 }
 .animate-bounce {
   animation: bounce 1.2s infinite;
+  .featured-card {
+  aspect-ratio: 4/3;
 }
