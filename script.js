@@ -53,6 +53,42 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: "power2.out"
     });
   }
+ // Animación GSAP para sección About
+if (window.gsap && window.ScrollTrigger) {
+  gsap.from("#about h2", {
+    scrollTrigger: {
+      trigger: "#about",
+      start: "top 80%"
+    },
+    y: 40,
+    opacity: 0,
+    duration: 0.8,
+    ease: "power2.out"
+  });
+
+  gsap.from("#about p", {
+    scrollTrigger: {
+      trigger: "#about",
+      start: "top 75%"
+    },
+    y: 20,
+    opacity: 0,
+    duration: 0.6,
+    stagger: 0.15,
+    ease: "power2.out"
+  });
+
+  gsap.from("#about img", {
+    scrollTrigger: {
+      trigger: "#about",
+      start: "top 75%"
+    },
+    scale: 0.9,
+    opacity: 0,
+    duration: 0.8,
+    ease: "power2.out"
+  });
+}
 
   // Efecto Parallax en imágenes de Featured Work
   const featuredCards = document.querySelectorAll("#featured .featured-card img");
