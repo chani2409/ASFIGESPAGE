@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("✅ JS cargado correctamente");
 
-  // Año dinámico
+  // Año dinámico en el footer
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -15,15 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicializar Hero con shader animado
   initHeroShader();
 
-  // Animaciones de scroll
+  // Animaciones de scroll con GSAP
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
+    // Featured Work - entrada
     gsap.from("#featured .featured-card", {
       scrollTrigger: { trigger: "#featured", start: "top 80%" },
       opacity: 0, y: 50, duration: 0.8, stagger: 0.2, ease: "power2.out"
     });
 
+    // Featured Work - parallax vertical en scroll
     document.querySelectorAll('#featured .featured-card img').forEach(img => {
       gsap.to(img, {
         yPercent: -10,
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // About - texto e imagen
     gsap.from("#about h2", {
       scrollTrigger: { trigger: "#about", start: "top 80%" },
       y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
@@ -45,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
     });
 
+    // Footer
     gsap.from("#footer", {
       scrollTrigger: { trigger: "#footer", start: "top 90%" },
       opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
