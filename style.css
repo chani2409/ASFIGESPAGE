@@ -1,5 +1,12 @@
 body { margin: 0; }
 
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0a0f1c 0%, #000 100%);
+}
+
 #hero-canvas canvas {
   display: block;
   width: 100%;
