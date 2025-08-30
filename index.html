@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prueba Mínima Funcional</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script defer src="./script.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="p-4 bg-gray-800 fixed top-0 left-0 right-0 z-50">
+    <nav class="max-w-5xl mx-auto flex justify-between">
+      <span class="font-bold">LOGO</span>
+      <div class="space-x-4">
+        <a href="#hero" class="hover:text-teal-400">Hero</a>
+        <a href="#about" class="hover:text-teal-400">About</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="pt-20">
+    <section id="hero" class="h-screen flex items-center justify-center relative">
+      <div id="hero-canvas" class="absolute inset-0 -z-10"></div>
+      <h1 class="text-4xl font-bold">Hero con Three.js</h1>
+    </section>
+
+    <section id="about" class="h-screen flex items-center justify-center bg-gray-800">
+      <h2 class="text-3xl font-semibold">Sección About</h2>
+    </section>
+  </main>
+</body>
+</html>
