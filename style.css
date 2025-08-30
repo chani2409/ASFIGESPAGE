@@ -13,33 +13,35 @@ body {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: 0; /* Canvas al fondo */
+  z-index: 0; /* canvas al fondo */
 }
 
+/* Canvas ocupa todo y no bloquea interacciones */
 #hero-canvas canvas {
   display: block;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
-/* Contenido del Hero por encima del canvas */
+/* Contenido del Hero encima del canvas */
 #hero .text-center,
 #hero .absolute.bottom-8 {
   position: relative;
   z-index: 10;
 }
 
-/* Header transparente para dejar ver el shader detrás */
+/* Header transparente para ver el shader detrás */
 header {
   background: transparent;
 }
 
-/* Featured Work: mantener proporción de tarjetas */
+/* Featured Work proporción visual consistente */
 .featured-card {
   aspect-ratio: 4/3;
 }
 
-/* Indicador de scroll animado */
+/* Indicador de scroll */
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(6px); }
