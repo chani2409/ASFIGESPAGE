@@ -14,4 +14,8 @@ body {
   animation: bounce 1.2s infinite;
   .featured-card {
   aspect-ratio: 4/3;
+ /* Mantener consistencia visual */
+#about img {
+  object-fit: cover;
 }
+
