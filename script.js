@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
   }
 
-  // Inicializar Hero con shader animado
-  initHeroShader();
+  // Inicializar Hero con shader + esfera
+  initHeroShaderWithSphere();
 
   // Animaciones de scroll con GSAP
   if (window.gsap && window.ScrollTrigger) {
@@ -59,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initFeaturedParallax();
 });
 
-function initHeroShader() {
+function initHeroShaderWithSphere() {
   const container = document.getElementById('hero-canvas');
   if (!container || !window.THREE) return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.z = 3;
+  camera.position.z = 4;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -85,7 +85,6 @@ function initHeroShader() {
     }
   `;
 
-  // Fragment shader modificado para eliminar franjas negras
   const fragmentShader = `
     uniform float uTime;
     uniform vec2 uMouse;
@@ -93,35 +92,37 @@ function initHeroShader() {
     varying vec2 vUv;
 
     void main() {
-      vec2 uv = vUv * 10.0; // Escala del patrón
+      vec2 uv = vUv * 10.0;
       vec2 grid = abs(fract(uv - 0.5) - 0.5) / fwidth(uv);
       float line = min(grid.x, grid.y);
-
-      // Brillo animado
       float glow = 0.3 + 0.7 * sin(uTime * 3.0 + uv.x + uv.y);
-
-      // Color neón azul para las líneas
       vec3 lineColor = vec3(0.0, 1.0, 1.0) * smoothstep(1.0, 0.0, line) * glow;
-
-      // Color base tenue para el fondo (azul oscuro)
       vec3 baseColor = vec3(0.02, 0.08, 0.1);
-
-      // Mezcla del color base con las líneas
       vec3 finalColor = baseColor + lineColor;
-
       gl_FragColor = vec4(finalColor, 1.0);
     }
   `;
 
-  const geometry = new THREE.PlaneGeometry(6, 6, 1, 1);
-  const material = new THREE.ShaderMaterial({
+  // Plano con shader (fondo)
+  const planeGeometry = new THREE.PlaneGeometry(6, 6, 1, 1);
+  const planeMaterial = new THREE.ShaderMaterial({
     uniforms,
     vertexShader,
     fragmentShader
   });
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  scene.add(plane);
 
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  // Esfera (icosaedro) wireframe
+  const sphereGeometry = new THREE.IcosahedronGeometry(1.5, 1);
+  const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true });
+  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  scene.add(sphere);
+
+  // Luz para la esfera
+  const light = new THREE.PointLight(0xffffff, 1);
+  light.position.set(5, 5, 5);
+  scene.add(light);
 
   // Movimiento de cámara con el mouse
   document.addEventListener('mousemove', (e) => {
@@ -136,6 +137,8 @@ function initHeroShader() {
   function animate() {
     requestAnimationFrame(animate);
     uniforms.uTime.value = clock.getElapsedTime();
+    sphere.rotation.x += 0.003;
+    sphere.rotation.y += 0.004;
     renderer.render(scene, camera);
   }
   animate();
