@@ -3,7 +3,7 @@ body {
   margin: 0;
 }
 
-/* Contenedor del Hero y fondo de respaldo */
+/* Hero y canvas */
 #hero {
   position: relative;
   overflow: hidden;
@@ -14,10 +14,8 @@ body {
   inset: 0;
   overflow: hidden;
   z-index: 0; /* Canvas al fondo */
-  background: radial-gradient(circle at center, #0a0f1c 0%, #000 100%);
 }
 
-/* Canvas de Three.js ocupa todo el contenedor */
 #hero-canvas canvas {
   display: block;
   width: 100%;
@@ -31,7 +29,12 @@ body {
   z-index: 10;
 }
 
-/* Mantener proporción de las tarjetas de Featured Work */
+/* Header transparente para dejar ver el shader detrás */
+header {
+  background: transparent;
+}
+
+/* Featured Work: mantener proporción de tarjetas */
 .featured-card {
   aspect-ratio: 4/3;
 }
