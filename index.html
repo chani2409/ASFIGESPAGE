@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prueba Mínima Funcional</title>
+  <title>Hero estilo Lusion</title>
   <link rel="stylesheet" href="./style.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script defer src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script defer src="./script.js"></script>
 </head>
@@ -17,27 +16,26 @@
       <span class="font-bold">LOGO</span>
       <div class="space-x-4">
         <a href="#hero" class="hover:text-teal-400">Hero</a>
-        <a href="#about" class="hover:text-teal-400">About</a>
         <a href="#featured" class="hover:text-teal-400">Featured</a>
       </div>
     </nav>
   </header>
 
   <main class="pt-20">
-    <!-- Hero -->
+    <!-- Hero estilo Lusion -->
     <section id="hero" class="h-screen flex flex-col items-center justify-center relative overflow-hidden">
-  <div id="hero-canvas" class="absolute inset-0 -z-10"></div>
-  <div class="text-center px-4">
-    <h1 class="text-6xl sm:text-7xl font-extrabold mb-4 tracking-tight">Beyond Visions</h1>
-    <p class="text-lg text-white/70 max-w-xl mx-auto">Creamos experiencias digitales que conectan con tu audiencia.</p>
-  </div>
-  <div class="absolute bottom-8 flex flex-col items-center text-white/60">
-    <span class="text-xs mb-2">Scroll</span>
-    <div class="h-10 w-6 border border-white/40 rounded-full flex items-start justify-center p-1">
-      <div class="h-2 w-2 bg-teal-400 rounded-full animate-bounce"></div>
-    </div>
-  </div>
-</section>
+      <div id="hero-canvas" class="absolute inset-0 -z-10"></div>
+      <div class="text-center px-4">
+        <h1 class="text-6xl sm:text-7xl font-extrabold mb-4 tracking-tight">Beyond Visions</h1>
+        <p class="text-lg text-white/70 max-w-xl mx-auto">Creamos experiencias digitales que conectan con tu audiencia.</p>
+      </div>
+      <div class="absolute bottom-8 flex flex-col items-center text-white/60">
+        <span class="text-xs mb-2">Scroll</span>
+        <div class="h-10 w-6 border border-white/40 rounded-full flex items-start justify-center p-1">
+          <div class="h-2 w-2 bg-teal-400 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    </section>
 
     <!-- Featured Work -->
     <section id="featured" class="py-24 max-w-6xl mx-auto px-4">
@@ -63,55 +61,6 @@
         </div>
       </div>
     </section>
-    <section id="about" class="py-24 max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-  <div>
-    <h2 class="text-3xl sm:text-4xl font-bold mb-6">Sobre nuestro estudio</h2>
-    <p class="text-white/80 mb-4">
-      Somos un equipo multidisciplinario que combina diseño, tecnología y narrativa para crear experiencias digitales inmersivas. 
-      Nuestro enfoque se basa en la experimentación constante y la búsqueda de soluciones únicas para cada proyecto.
-    </p>
-    <p class="text-white/70">
-      Desde interfaces interactivas hasta entornos 3D complejos, trabajamos para que cada detalle cuente una historia.
-    </p>
-  </div>
-  <div class="relative group">
-    <img src="https://picsum.photos/800/600?random=30" alt="Imagen del estudio" class="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105">
-    <div class="absolute inset-0 bg-teal-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-  </div>
-</section>
   </main>
-  <footer id="footer" class="bg-gray-900 border-t border-white/10 py-12">
-  <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 items-center">
-    <!-- Logo / Nombre -->
-    <div>
-      <span class="font-bold text-teal-400 text-lg">LOGO</span>
-      <p class="text-white/60 mt-2 text-sm">Creando experiencias digitales inmersivas.</p>
-    </div>
-
-    <!-- Navegación -->
-    <nav class="flex flex-col space-y-2 text-sm">
-      <a href="#hero" class="hover:text-teal-400 transition">Inicio</a>
-      <a href="#featured" class="hover:text-teal-400 transition">Proyectos</a>
-      <a href="#about" class="hover:text-teal-400 transition">Sobre nosotros</a>
-      <a href="#contact" class="hover:text-teal-400 transition">Contacto</a>
-    </nav>
-
-    <!-- Redes sociales -->
-    <div class="flex space-x-4 justify-start md:justify-end">
-      <a href="#" class="text-white/60 hover:text-teal-400 transition" aria-label="Twitter">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.4.36a9.09 9.09 0 0 1-2.88 1.1A4.52 4.52 0 0 0 16.11 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.7.11 1.03A12.84 12.84 0 0 1 3.15.84a4.52 4.52 0 0 0 1.4 6.03A4.48 4.48 0 0 1 2 6.1v.06c0 2.18 1.55 4 3.6 4.41a4.52 4.52 0 0 1-2.04.08 4.53 4.53 0 0 0 4.22 3.14A9.06 9.06 0 0 1 0 19.54a12.8 12.8 0 0 0 6.92 2.03c8.3 0 12.84-6.88 12.84-12.84 0-.2 0-.39-.01-.58A9.18 9.18 0 0 0 23 3z"/></svg>
-      </a>
-      <a href="#" class="text-white/60 hover:text-teal-400 transition" aria-label="Instagram">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm8.75 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg>
-      </a>
-      <a href="#" class="text-white/60 hover:text-teal-400 transition" aria-label="LinkedIn">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4V24h-4V8zm7.5 0h3.8v2.16h.05c.53-1 1.82-2.16 3.75-2.16 4 0 4.75 2.63 4.75 6.05V24h-4v-7.9c0-1.88-.03-4.3-2.62-4.3-2.62 0-3.02 2.05-3.02 4.16V24h-4V8z"/></svg>
-      </a>
-    </div>
-  </div>
-  <div class="mt-8 text-center text-xs text-white/50">
-    © <span id="year"></span> Estudio Creativo. Todos los derechos reservados.
-  </div>
-</footer>
 </body>
 </html>
