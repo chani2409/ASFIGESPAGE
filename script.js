@@ -106,3 +106,19 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 });
+ // Año dinámico en el footer
+ document.getElementById('year').textContent = new Date().getFullYear();
+
+// Animación de entrada del footer
+if (window.gsap && window.ScrollTrigger) {
+  gsap.from("#footer", {
+    scrollTrigger: {
+      trigger: "#footer",
+      start: "top 90%"
+    },
+    opacity: 0,
+    y: 40,
+    duration: 0.8,
+    ease: "power2.out"
+  });
+}
