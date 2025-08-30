@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estudio Creativo</title>
+  <title>Prueba Mínima Funcional</title>
   <link rel="stylesheet" href="./style.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -12,14 +12,13 @@
   <script defer src="./script.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
-  <!-- Header -->
-  <header class="p-4 bg-gray-800 fixed top-0 left-0 right-0 z-50 border-b border-white/10">
-    <nav class="max-w-6xl mx-auto flex justify-between items-center">
-      <span class="font-bold text-teal-400">LOGO</span>
+  <header class="p-4 bg-gray-800 fixed top-0 left-0 right-0 z-50">
+    <nav class="max-w-5xl mx-auto flex justify-between">
+      <span class="font-bold">LOGO</span>
       <div class="space-x-4">
         <a href="#hero" class="hover:text-teal-400">Hero</a>
-        <a href="#featured" class="hover:text-teal-400">Featured</a>
         <a href="#about" class="hover:text-teal-400">About</a>
+        <a href="#featured" class="hover:text-teal-400">Featured</a>
       </div>
     </nav>
   </header>
@@ -45,65 +44,25 @@
       <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">Featured Work</h2>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=21" alt="Proyecto destacado 1" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <img src="https://picsum.photos/800/600?random=21" alt="Proyecto destacado 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 1</span>
           </div>
         </div>
         <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=22" alt="Proyecto destacado 2" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <img src="https://picsum.photos/800/600?random=22" alt="Proyecto destacado 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 2</span>
           </div>
         </div>
         <div class="featured-card relative overflow-hidden rounded-lg group cursor-pointer">
-          <img src="https://picsum.photos/800/600?random=23" alt="Proyecto destacado 3" class="w-full h-full object-cover transition-transform duration-500">
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <img src="https://picsum.photos/800/600?random=23" alt="Proyecto destacado 3" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 3</span>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- About -->
-    <section id="about" class="py-24 max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-bold mb-6">Sobre nuestro estudio</h2>
-        <p class="text-white/80 mb-4">
-          Combinamos diseño, 3D y desarrollo para crear experiencias digitales memorables; experimentación, detalle y narrativa en cada proyecto.
-        </p>
-        <p class="text-white/70">
-          Desde interfaces interactivas hasta entornos WebGL, diseñamos productos que se sienten vivos.
-        </p>
-      </div>
-      <div class="relative group">
-        <img src="https://picsum.photos/800/600?random=30" alt="Imagen del estudio" class="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105">
-        <div class="absolute inset-0 bg-teal-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-      </div>
-    </section>
   </main>
-
-  <!-- Footer -->
-  <footer id="footer" class="bg-gray-900 border-t border-white/10 py-12">
-    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 items-center">
-      <div>
-        <span class="font-bold text-teal-400 text-lg">LOGO</span>
-        <p class="text-white/60 mt-2 text-sm">Creando experiencias digitales inmersivas.</p>
-      </div>
-      <nav class="flex flex-col space-y-2 text-sm">
-        <a href="#hero" class="hover:text-teal-400 transition">Inicio</a>
-        <a href="#featured" class="hover:text-teal-400 transition">Proyectos</a>
-        <a href="#about" class="hover:text-teal-400 transition">Sobre nosotros</a>
-      </nav>
-      <div class="flex space-x-4 justify-start md:justify-end">
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">Twitter</a>
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">Instagram</a>
-        <a href="#" class="text-white/60 hover:text-teal-400 transition">LinkedIn</a>
-      </div>
-    </div>
-    <div class="mt-8 text-center text-xs text-white/50">
-      © <span id="year"></span> Estudio Creativo. Todos los derechos reservados.
-    </div>
-  </footer>
 </body>
 </html>
