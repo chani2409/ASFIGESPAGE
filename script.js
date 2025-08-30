@@ -1,66 +1,72 @@
-document.addEventListener('DOMContentLoaded', () => {
+// /assets/js/main.js
+document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ JS cargado correctamente");
 
-  // Año dinámico en el footer
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  // Animación de texto del Hero
-  if (window.gsap) {
-    const tl = gsap.timeline();
-    tl.from("#hero h1", { y: 50, opacity: 0, duration: 1, ease: "power3.out" })
-      .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
-  }
-
-  // Inicializar Hero con shader + esfera
+  initYear();
+  initHeroAnimations();
   initHeroShaderWithSphere();
-
-  // Animaciones de scroll con GSAP
-  if (window.gsap && window.ScrollTrigger) {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Featured Work - entrada
-    gsap.from("#featured .featured-card", {
-      scrollTrigger: { trigger: "#featured", start: "top 80%" },
-      opacity: 0, y: 50, duration: 0.8, stagger: 0.2, ease: "power2.out"
-    });
-
-    // Featured Work - parallax vertical en scroll
-    document.querySelectorAll('#featured .featured-card img').forEach(img => {
-      gsap.to(img, {
-        yPercent: -10,
-        ease: "none",
-        scrollTrigger: { trigger: img, scrub: true }
-      });
-    });
-
-    // About - texto e imagen
-    gsap.from("#about h2", {
-      scrollTrigger: { trigger: "#about", start: "top 80%" },
-      y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
-    });
-    gsap.from("#about p", {
-      scrollTrigger: { trigger: "#about", start: "top 75%" },
-      y: 20, opacity: 0, duration: 0.6, stagger: 0.15, ease: "power2.out"
-    });
-    gsap.from("#about img", {
-      scrollTrigger: { trigger: "#about", start: "top 75%" },
-      x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
-    });
-
-    // Footer
-    gsap.from("#footer", {
-      scrollTrigger: { trigger: "#footer", start: "top 90%" },
-      opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
-    });
-  }
-
-  // Parallax hover Featured
+  initScrollAnimations();
   initFeaturedParallax();
 });
 
+// Footer dinámico
+function initYear() {
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+}
+
+// Animación texto Hero
+function initHeroAnimations() {
+  if (!window.gsap) return;
+
+  gsap.timeline()
+    .from("#hero h1", { y: 50, opacity: 0, duration: 1, ease: "power3.out" })
+    .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
+}
+
+// Scroll animations con GSAP
+function initScrollAnimations() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  const fadeInConfig = { opacity: 0, duration: 0.8, ease: "power2.out" };
+
+  gsap.from("#featured .featured-card", {
+    ...fadeInConfig, y: 50, stagger: 0.2,
+    scrollTrigger: { trigger: "#featured", start: "top 80%" }
+  });
+
+  document.querySelectorAll("#featured .featured-card img").forEach(img => {
+    gsap.to(img, {
+      yPercent: -10, ease: "none",
+      scrollTrigger: { trigger: img, scrub: true }
+    });
+  });
+
+  gsap.from("#about h2", {
+    ...fadeInConfig, y: 40,
+    scrollTrigger: { trigger: "#about", start: "top 80%" }
+  });
+
+  gsap.from("#about p", {
+    ...fadeInConfig, y: 20, duration: 0.6, stagger: 0.15,
+    scrollTrigger: { trigger: "#about", start: "top 75%" }
+  });
+
+  gsap.from("#about img", {
+    ...fadeInConfig, x: 50, rotation: 2,
+    scrollTrigger: { trigger: "#about", start: "top 75%" }
+  });
+
+  gsap.from("#footer", {
+    ...fadeInConfig, y: 40,
+    scrollTrigger: { trigger: "#footer", start: "top 90%" }
+  });
+}
+
+// Shader del Hero con esfera 3D
 function initHeroShaderWithSphere() {
-  const container = document.getElementById('hero-canvas');
+  const container = document.getElementById("hero-canvas");
   if (!container || !window.THREE) return;
 
   const scene = new THREE.Scene();
@@ -90,7 +96,6 @@ function initHeroShaderWithSphere() {
     uniform vec2 uMouse;
     uniform vec2 uResolution;
     varying vec2 vUv;
-
     void main() {
       vec2 uv = vUv * 10.0;
       vec2 grid = abs(fract(uv - 0.5) - 0.5) / fwidth(uv);
@@ -98,108 +103,61 @@ function initHeroShaderWithSphere() {
       float glow = 0.3 + 0.7 * sin(uTime * 3.0 + uv.x + uv.y);
       vec3 lineColor = vec3(0.0, 1.0, 1.0) * smoothstep(1.0, 0.0, line) * glow;
       vec3 baseColor = vec3(0.02, 0.08, 0.1);
-      vec3 finalColor = baseColor + lineColor;
-      gl_FragColor = vec4(finalColor, 1.0);
+      gl_FragColor = vec4(baseColor + lineColor, 1.0);
     }
   `;
 
-  // Plano con shader (fondo)
-  const planeGeometry = new THREE.PlaneGeometry(6, 6, 1, 1);
-  const planeMaterial = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader,
-    fragmentShader
-  });
-  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  scene.add(plane);
+  scene.add(new THREE.Mesh(
+    new THREE.PlaneGeometry(6, 6),
+    new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader })
+  ));
 
-  // Esfera (icosaedro) wireframe
-  const sphereGeometry = new THREE.IcosahedronGeometry(1.5, 1);
-  const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true });
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  const sphere = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.5, 1),
+    new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true })
+  );
   scene.add(sphere);
 
-  // Luz para la esfera
   const light = new THREE.PointLight(0xffffff, 1);
   light.position.set(5, 5, 5);
   scene.add(light);
 
-  // Movimiento de cámara con el mouse
-  document.addEventListener('mousemove', (e) => {
+  document.addEventListener("pointermove", e => {
     uniforms.uMouse.value.x = e.clientX / window.innerWidth;
     uniforms.uMouse.value.y = 1.0 - e.clientY / window.innerHeight;
     camera.position.x = (uniforms.uMouse.value.x - 0.5) * 0.5;
     camera.position.y = (uniforms.uMouse.value.y - 0.5) * 0.5;
-  });
-
-  // Añadimos la nueva capa futurista aquí
-  addFuturisticLayer(scene);
+  }, { passive: true });
 
   const clock = new THREE.Clock();
-
-  function animate() {
+  (function animate() {
     requestAnimationFrame(animate);
     uniforms.uTime.value = clock.getElapsedTime();
     sphere.rotation.x += 0.003;
     sphere.rotation.y += 0.004;
     renderer.render(scene, camera);
-  }
-  animate();
+  })();
 
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", debounce(() => {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
     uniforms.uResolution.value.set(container.clientWidth, container.clientHeight);
-  });
+  }, 150));
 }
 
-// NUEVA CAPA: partículas flotantes y glow extra
-function addFuturisticLayer(scene) {
-  const particlesGeometry = new THREE.BufferGeometry();
-  const count = 200;
-  const positions = [];
-  for (let i = 0; i < count; i++) {
-    positions.push((Math.random() - 0.5) * 20);
-    positions.push(Math.random() * 5);
-    positions.push((Math.random() - 0.5) * 20);
-  }
-  particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-  const particlesMaterial = new THREE.PointsMaterial({
-    color: 0x7cf2d4,
-    size: 0.05,
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending
-  });
-
-  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particles);
-
-  const clock = new THREE.Clock();
-  function animateParticles() {
-    requestAnimationFrame(animateParticles);
-    const t = clock.getElapsedTime();
-    particles.rotation.y = t * 0.05;
-  }
-  animateParticles();
-}
-
+// Parallax hover en Featured
 function initFeaturedParallax() {
   const images = document.querySelectorAll("#featured .featured-card img");
   if (!images.length) return;
 
   images.forEach(img => {
-    let raf = null;
-    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+    let raf = null, targetX = 0, targetY = 0, currentX = 0, currentY = 0;
 
     function onMove(e) {
       const rect = img.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      targetX = x * 15;
-      targetY = y * 15;
+      targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 15;
+      targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 15;
       if (!raf) raf = requestAnimationFrame(apply);
     }
 
@@ -207,4 +165,27 @@ function initFeaturedParallax() {
       raf = null;
       currentX += (targetX - currentX) * 0.12;
       currentY += (targetY - currentY) * 0.12;
-      img.style.transform = `scale(1.08) translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px)
+      img.style.transform = `scale(1.05) translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px)`;
+      if (Math.abs(targetX - currentX) > 0.2 || Math.abs(targetY - currentY) > 0.2) {
+        raf = requestAnimationFrame(apply);
+      }
+    }
+
+    function reset() {
+      targetX = targetY = 0;
+      img.style.transform = "scale(1) translate(0, 0)";
+    }
+
+    img.addEventListener("mousemove", onMove);
+    img.addEventListener("mouseleave", reset);
+  });
+}
+
+// Utilidad: debounce
+function debounce(fn, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
