@@ -1,137 +1,16 @@
-/* =========================
-   RESET Y BASE
-   ========================= */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: #000;
-}
-
-body {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* =========================
-   HERO FUTURISTA
-   ========================= */
 #hero {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at center, #0a0f1c 0%, #000 100%);
 }
 
 #hero-canvas {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   z-index: 0;
-  background: radial-gradient(circle at center, #0a0f1c 0%, #000 100%);
 }
 
 #hero-canvas canvas {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-/* Contenido por encima del canvas */
-#hero .text-center,
-#hero .absolute.bottom-8 {
-  position: relative;
-  z-index: 10;
-}
-
-/* Glow sutil en títulos/textos del hero */
-#hero h1 {
-  text-shadow: 0 0 8px rgba(124, 242, 212, 0.4),
-               0 0 16px rgba(124, 242, 212, 0.2);
-}
-
-#hero p {
-  text-shadow: 0 0 6px rgba(124, 242, 212, 0.25);
-}
-
-/* Indicador de scroll animado */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
-}
-.animate-bounce {
-  animation: bounce 1.2s infinite;
-}
-
-/* =========================
-   FEATURED WORK
-   ========================= */
-.featured-card {
-  aspect-ratio: 4/3;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  position: relative;
-  transition: transform 0.4s ease;
-  will-change: transform;
-}
-
-.featured-card img {
-  transition: transform 0.4s ease;
-  will-change: transform;
-}
-
-.featured-card:hover img {
-  transform: scale(1.05);
-}
-
-/* Overlay hover */
-.featured-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-.featured-card:hover::after {
-  opacity: 1;
-}
-
-/* =========================
-   ABOUT
-   ========================= */
-#about img {
-  transition: transform 0.7s ease, box-shadow 0.7s ease;
-}
-#about img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(124, 242, 212, 0.4);
-}
-
-/* =========================
-   FOOTER
-   ========================= */
-footer {
-  background-color: #0a0f1c;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-footer a {
-  transition: color 0.3s ease;
-}
-footer a:hover {
-  color: #7cf2d4;
-}
-
-/* =========================
-   UTILIDADES
-   ========================= */
-.glow-teal {
-  box-shadow: 0 0 8px rgba(124, 242, 212, 0.6),
-              0 0 16px rgba(124, 242, 212, 0.3);
-}
-
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
