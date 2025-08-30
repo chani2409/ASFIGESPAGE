@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("✅ JS cargado correctamente");
 
-  // Año dinámico en el footer
+  // Año dinámico
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -12,29 +12,29 @@ document.addEventListener('DOMContentLoaded', () => {
       .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
   }
 
-  // Inicializar Hero con shader + esfera
-  initHeroShaderWithSphere();
+  // Inicializar Hero
+  try {
+    initHeroShaderWithSphere();
+  } catch (e) {
+    console.error("Error inicializando Hero:", e);
+  }
 
-  // Animaciones de scroll con GSAP
+  // Animaciones de scroll
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Featured Work - entrada
     gsap.from("#featured .featured-card", {
       scrollTrigger: { trigger: "#featured", start: "top 80%" },
       opacity: 0, y: 50, duration: 0.8, stagger: 0.2, ease: "power2.out"
     });
 
-    // Featured Work - parallax vertical en scroll
     document.querySelectorAll('#featured .featured-card img').forEach(img => {
       gsap.to(img, {
-        yPercent: -10,
-        ease: "none",
+        yPercent: -10, ease: "none",
         scrollTrigger: { trigger: img, scrub: true }
       });
     });
 
-    // About - texto e imagen
     gsap.from("#about h2", {
       scrollTrigger: { trigger: "#about", start: "top 80%" },
       y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
       x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
     });
 
-    // Footer
     gsap.from("#footer", {
       scrollTrigger: { trigger: "#footer", start: "top 90%" },
       opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
@@ -68,6 +67,7 @@ function initHeroShaderWithSphere() {
   camera.position.z = 4;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
@@ -84,8 +84,11 @@ function initHeroShaderWithSphere() {
     }
   `;
 
-  // Shader futurista orgánico
+  // Shader futurista orgánico con precisión declarada
   const fragmentShader = `
+    precision highp float;
+    precision highp int;
+
     uniform float uTime;
     uniform vec2 uResolution;
     varying vec2 vUv;
@@ -113,7 +116,7 @@ function initHeroShaderWithSphere() {
       uv += n * 0.3;
 
       float lines = abs(sin(uv.x * 3.1415) * cos(uv.y * 3.1415));
-      lines = smoothstep(0.45, 0.5, lines);
+      lines = smoothstep(0.44, 0.5, lines); // grosor medio
 
       float nodes = smoothstep(0.02, 0.0, length(fract(uv) - 0.5));
 
@@ -128,20 +131,23 @@ function initHeroShaderWithSphere() {
     }
   `;
 
-  // Plano con shader (fondo)
+  // Plano con shader (un poco detrás y sin escribir profundidad)
   const planeGeometry = new THREE.PlaneGeometry(6, 6, 1, 1);
   const planeMaterial = new THREE.ShaderMaterial({
     uniforms,
     vertexShader,
-    fragmentShader
+    fragmentShader,
+    depthWrite: false
   });
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.position.z = -0.1;
   scene.add(plane);
 
   // Esfera (icosaedro) wireframe
   const sphereGeometry = new THREE.IcosahedronGeometry(1.5, 1);
   const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true });
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  sphere.position.set(0, 0, 0.0);
   scene.add(sphere);
 
   // Luz para la esfera
@@ -161,10 +167,12 @@ function initHeroShaderWithSphere() {
   animate();
 
   window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    uniforms.uResolution.value.set(container.clientWidth, container.clientHeight);
+    renderer.setSize(w, h);
+    uniforms.uResolution.value.set(w, h);
   });
 }
 
@@ -197,4 +205,10 @@ function initFeaturedParallax() {
 
     function reset() {
       targetX = targetY = 0;
-     
+      img.style.transform = "scale(1) translate(0, 0)";
+    }
+
+    img.addEventListener("mousemove", onMove);
+    img.addEventListener("mouseleave", reset);
+  });
+}
