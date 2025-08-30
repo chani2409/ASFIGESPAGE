@@ -53,4 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: "power2.out"
     });
   }
+
+  // Efecto Parallax en imágenes de Featured Work
+  const featuredCards = document.querySelectorAll("#featured .featured-card img");
+
+  featuredCards.forEach(img => {
+    img.addEventListener("mousemove", (e) => {
+      const rect = img.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      img.style.transform = `scale(1.1) translate(${x * 15}px, ${y * 15}px)`;
+    });
+
+    img.addEventListener("mouseleave", () => {
+      img.style.transform = "scale(1.0) translate(0, 0)";
+    });
+  });
 });
