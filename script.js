@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("✅ JS cargado correctamente");
 
-  // Año dinámico
+  // Año dinámico en el footer
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -12,29 +12,29 @@ document.addEventListener('DOMContentLoaded', () => {
       .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
   }
 
-  // Inicializar Hero
-  try {
-    initHeroShaderWithSphere();
-  } catch (e) {
-    console.error("Error inicializando Hero:", e);
-  }
+  // Inicializar Hero con shader + esfera
+  initHeroShaderWithSphere();
 
-  // Animaciones de scroll
+  // Animaciones de scroll con GSAP
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
+    // Featured Work - entrada
     gsap.from("#featured .featured-card", {
       scrollTrigger: { trigger: "#featured", start: "top 80%" },
       opacity: 0, y: 50, duration: 0.8, stagger: 0.2, ease: "power2.out"
     });
 
+    // Featured Work - parallax vertical en scroll
     document.querySelectorAll('#featured .featured-card img').forEach(img => {
       gsap.to(img, {
-        yPercent: -10, ease: "none",
+        yPercent: -10,
+        ease: "none",
         scrollTrigger: { trigger: img, scrub: true }
       });
     });
 
+    // About - texto e imagen
     gsap.from("#about h2", {
       scrollTrigger: { trigger: "#about", start: "top 80%" },
       y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
     });
 
+    // Footer
     gsap.from("#footer", {
       scrollTrigger: { trigger: "#footer", start: "top 90%" },
       opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
@@ -67,12 +68,12 @@ function initHeroShaderWithSphere() {
   camera.position.z = 4;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
   const uniforms = {
     uTime: { value: 0 },
+    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
     uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) }
   };
 
@@ -84,76 +85,52 @@ function initHeroShaderWithSphere() {
     }
   `;
 
-  // Shader futurista orgánico con precisión declarada
   const fragmentShader = `
-    precision highp float;
-    precision highp int;
-
     uniform float uTime;
+    uniform vec2 uMouse;
     uniform vec2 uResolution;
     varying vec2 vUv;
 
-    float hash(vec2 p) {
-      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-    }
-
-    float noise(vec2 p) {
-      vec2 i = floor(p);
-      vec2 f = fract(p);
-      float a = hash(i);
-      float b = hash(i + vec2(1.0, 0.0));
-      float c = hash(i + vec2(0.0, 1.0));
-      float d = hash(i + vec2(1.0, 1.0));
-      vec2 u = f * f * (3.0 - 2.0 * f);
-      return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-    }
-
     void main() {
-      vec2 uv = vUv * 4.0;
-      uv.x += uTime * 0.05;
-
-      float n = noise(uv * 2.0 + uTime * 0.1);
-      uv += n * 0.3;
-
-      float lines = abs(sin(uv.x * 3.1415) * cos(uv.y * 3.1415));
-      lines = smoothstep(0.44, 0.5, lines); // grosor medio
-
-      float nodes = smoothstep(0.02, 0.0, length(fract(uv) - 0.5));
-
-      vec3 baseColor = mix(vec3(0.02, 0.05, 0.1), vec3(0.0, 0.0, 0.0), vUv.y);
-      vec3 circuitColor = mix(vec3(0.0, 1.0, 1.0), vec3(0.5, 0.0, 1.0), vUv.y);
-
-      float glow = 0.5 + 0.5 * sin(uTime * 2.0 + uv.x * 5.0);
-
-      vec3 color = baseColor + circuitColor * (lines + nodes) * glow;
-
-      gl_FragColor = vec4(color, 1.0);
+      vec2 uv = vUv * 10.0;
+      vec2 grid = abs(fract(uv - 0.5) - 0.5) / fwidth(uv);
+      float line = min(grid.x, grid.y);
+      float glow = 0.3 + 0.7 * sin(uTime * 3.0 + uv.x + uv.y);
+      vec3 lineColor = vec3(0.0, 1.0, 1.0) * smoothstep(1.0, 0.0, line) * glow;
+      vec3 baseColor = vec3(0.02, 0.08, 0.1);
+      vec3 finalColor = baseColor + lineColor;
+      gl_FragColor = vec4(finalColor, 1.0);
     }
   `;
 
-  // Plano con shader (un poco detrás y sin escribir profundidad)
+  // Plano con shader (fondo)
   const planeGeometry = new THREE.PlaneGeometry(6, 6, 1, 1);
   const planeMaterial = new THREE.ShaderMaterial({
     uniforms,
     vertexShader,
-    fragmentShader,
-    depthWrite: false
+    fragmentShader
   });
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.position.z = -0.1;
   scene.add(plane);
 
   // Esfera (icosaedro) wireframe
   const sphereGeometry = new THREE.IcosahedronGeometry(1.5, 1);
   const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true });
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphere.position.set(0, 0, 0.0);
   scene.add(sphere);
 
   // Luz para la esfera
   const light = new THREE.PointLight(0xffffff, 1);
   light.position.set(5, 5, 5);
   scene.add(light);
+
+  // Movimiento de cámara con el mouse
+  document.addEventListener('mousemove', (e) => {
+    uniforms.uMouse.value.x = e.clientX / window.innerWidth;
+    uniforms.uMouse.value.y = 1.0 - e.clientY / window.innerHeight;
+    camera.position.x = (uniforms.uMouse.value.x - 0.5) * 0.5;
+    camera.position.y = (uniforms.uMouse.value.y - 0.5) * 0.5;
+  });
 
   const clock = new THREE.Clock();
 
@@ -167,12 +144,10 @@ function initHeroShaderWithSphere() {
   animate();
 
   window.addEventListener('resize', () => {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    camera.aspect = w / h;
+    camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-    uniforms.uResolution.value.set(w, h);
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    uniforms.uResolution.value.set(container.clientWidth, container.clientHeight);
   });
 }
 
