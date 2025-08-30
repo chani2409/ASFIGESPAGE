@@ -12,186 +12,131 @@ document.addEventListener('DOMContentLoaded', () => {
       .from("#hero p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.5");
   }
 
-  // Inicializar Hero Three.js (con guards)
-  try {
-    if (typeof initHeroThree === "function") {
-      initHeroThree();
-    } else {
-      initHeroThree();
-    }
-  } catch (err) {
-    console.error("Error iniciando Hero Three.js:", err);
-  }
+  // Inicializar Hero con shader animado
+  initHeroShader();
 
-  // Animaciones de scroll (GSAP + ScrollTrigger)
+  // Animaciones de scroll
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Featured Work - entrada
-    if (document.querySelector("#featured .featured-card")) {
-      gsap.from("#featured .featured-card", {
-        scrollTrigger: { trigger: "#featured", start: "top 80%" },
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power2.out"
-      });
-    }
+    gsap.from("#featured .featured-card", {
+      scrollTrigger: { trigger: "#featured", start: "top 80%" },
+      opacity: 0, y: 50, duration: 0.8, stagger: 0.2, ease: "power2.out"
+    });
 
-    // Featured Work - parallax vertical en scroll
     document.querySelectorAll('#featured .featured-card img').forEach(img => {
       gsap.to(img, {
         yPercent: -10,
         ease: "none",
-        scrollTrigger: {
-          trigger: img,
-          scrub: true
-        }
+        scrollTrigger: { trigger: img, scrub: true }
       });
     });
 
-    // About - texto e imagen
-    if (document.getElementById("about")) {
-      gsap.from("#about h2", {
-        scrollTrigger: { trigger: "#about", start: "top 80%" },
-        y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
-      });
-      gsap.from("#about p", {
-        scrollTrigger: { trigger: "#about", start: "top 75%" },
-        y: 20, opacity: 0, duration: 0.6, stagger: 0.15, ease: "power2.out"
-      });
-      gsap.from("#about img", {
-        scrollTrigger: { trigger: "#about", start: "top 75%" },
-        x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
-      });
-    }
+    gsap.from("#about h2", {
+      scrollTrigger: { trigger: "#about", start: "top 80%" },
+      y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
+    });
+    gsap.from("#about p", {
+      scrollTrigger: { trigger: "#about", start: "top 75%" },
+      y: 20, opacity: 0, duration: 0.6, stagger: 0.15, ease: "power2.out"
+    });
+    gsap.from("#about img", {
+      scrollTrigger: { trigger: "#about", start: "top 75%" },
+      x: 50, rotation: 2, opacity: 0, duration: 0.8, ease: "power2.out"
+    });
 
-    // Footer
-    if (document.getElementById("footer")) {
-      gsap.from("#footer", {
-        scrollTrigger: { trigger: "#footer", start: "top 90%" },
-        opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
-      });
-    }
+    gsap.from("#footer", {
+      scrollTrigger: { trigger: "#footer", start: "top 90%" },
+      opacity: 0, y: 40, duration: 0.8, ease: "power2.out"
+    });
   }
 
-  // Parallax en hover para Featured Work
+  // Parallax hover Featured
   initFeaturedParallax();
 });
 
-// ---------- Three.js Hero ----------
-function initHeroThree() {
+function initHeroShader() {
   const container = document.getElementById('hero-canvas');
   if (!container || !window.THREE) return;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    60,
-    container.clientWidth / container.clientHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 5;
+  const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.z = 3;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
-  // Luz ambiental y direccional
-  const ambientLight = new THREE.AmbientLight(0x00ffff, 0.4);
-  scene.add(ambientLight);
-  const dirLight = new THREE.DirectionalLight(0x00ffff, 1);
-  dirLight.position.set(5, 5, 5);
-  scene.add(dirLight);
+  const uniforms = {
+    uTime: { value: 0 },
+    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+    uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) }
+  };
 
-  // Geometría de plano para el circuito
-  const geometry = new THREE.PlaneGeometry(10, 10, 40, 40);
+  const vertexShader = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
 
-  // Material con líneas tipo neón
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x00ffff,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.6
+  const fragmentShader = `
+    uniform float uTime;
+    uniform vec2 uMouse;
+    uniform vec2 uResolution;
+    varying vec2 vUv;
+
+    void main() {
+      vec2 uv = vUv * 10.0; // Escala del patrón
+      vec2 grid = abs(fract(uv - 0.5) - 0.5) / fwidth(uv);
+      float line = min(grid.x, grid.y);
+
+      // Brillo animado
+      float glow = 0.3 + 0.7 * sin(uTime * 3.0 + uv.x + uv.y);
+
+      // Color neón azul
+      vec3 color = vec3(0.0, 1.0, 1.0) * smoothstep(1.0, 0.0, line) * glow;
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const geometry = new THREE.PlaneGeometry(6, 6, 1, 1);
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader,
+    fragmentShader
   });
 
-  const plane = new THREE.Mesh(geometry, material);
-  scene.add(plane);
-
-  // Animación de parpadeo en la opacidad
-  let time = 0;
-
-  // Movimiento de cámara con el mouse
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  function animate() {
-    requestAnimationFrame(animate);
-
-    // Rotación lenta del plano
-    plane.rotation.x = Math.sin(time * 0.5) * 0.05;
-    plane.rotation.y = Math.cos(time * 0.5) * 0.05;
-
-    // Parpadeo sutil
-    material.opacity = 0.5 + Math.sin(time * 3) * 0.1;
-
-    // Movimiento de cámara suave hacia el mouse
-    camera.position.x += (mouseX - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY - camera.position.y) * 0.05;
-    camera.lookAt(scene.position);
-
-    time += 0.01;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  // Ajuste en resize
-  window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-  });
-}
-
-  // Icosaedro wireframe
-  const geometry = new THREE.IcosahedronGeometry(1.5, 1);
-  const material = new THREE.MeshStandardMaterial({ color: 0x7cf2d4, wireframe: true });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-  const light = new THREE.PointLight(0xffffff, 1);
-  light.position.set(5, 5, 5);
-  scene.add(light);
-
-  // Movimiento de cámara con el mouse (sutil)
+  // Movimiento de cámara con el mouse
   document.addEventListener('mousemove', (e) => {
-    const nx = (e.clientX / window.innerWidth - 0.5);
-    const ny = (e.clientY / window.innerHeight - 0.5);
-    camera.position.x = nx * 2;
-    camera.position.y = -ny * 2;
+    uniforms.uMouse.value.x = e.clientX / window.innerWidth;
+    uniforms.uMouse.value.y = 1.0 - e.clientY / window.innerHeight;
+    camera.position.x = (uniforms.uMouse.value.x - 0.5) * 0.5;
+    camera.position.y = (uniforms.uMouse.value.y - 0.5) * 0.5;
   });
+
+  const clock = new THREE.Clock();
 
   function animate() {
     requestAnimationFrame(animate);
-    mesh.rotation.x += 0.003;
-    mesh.rotation.y += 0.004;
+    uniforms.uTime.value = clock.getElapsedTime();
     renderer.render(scene, camera);
   }
   animate();
 
-  // Resize
   window.addEventListener('resize', () => {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
+    uniforms.uResolution.value.set(container.clientWidth, container.clientHeight);
   });
 }
 
-// ---------- Parallax hover Featured ----------
 function initFeaturedParallax() {
   const images = document.querySelectorAll("#featured .featured-card img");
   if (!images.length) return;
