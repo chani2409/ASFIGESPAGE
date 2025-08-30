@@ -73,7 +73,6 @@ function initHeroShaderWithSphere() {
 
   const uniforms = {
     uTime: { value: 0 },
-    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
     uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) }
   };
 
@@ -85,21 +84,47 @@ function initHeroShaderWithSphere() {
     }
   `;
 
+  // Shader futurista orgánico
   const fragmentShader = `
     uniform float uTime;
-    uniform vec2 uMouse;
     uniform vec2 uResolution;
     varying vec2 vUv;
 
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      float a = hash(i);
+      float b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0));
+      float d = hash(i + vec2(1.0, 1.0));
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+    }
+
     void main() {
-      vec2 uv = vUv * 10.0;
-      vec2 grid = abs(fract(uv - 0.5) - 0.5) / fwidth(uv);
-      float line = min(grid.x, grid.y);
-      float glow = 0.3 + 0.7 * sin(uTime * 3.0 + uv.x + uv.y);
-      vec3 lineColor = vec3(0.0, 1.0, 1.0) * smoothstep(1.0, 0.0, line) * glow;
-      vec3 baseColor = vec3(0.02, 0.08, 0.1);
-      vec3 finalColor = baseColor + lineColor;
-      gl_FragColor = vec4(finalColor, 1.0);
+      vec2 uv = vUv * 4.0;
+      uv.x += uTime * 0.05;
+
+      float n = noise(uv * 2.0 + uTime * 0.1);
+      uv += n * 0.3;
+
+      float lines = abs(sin(uv.x * 3.1415) * cos(uv.y * 3.1415));
+      lines = smoothstep(0.45, 0.5, lines);
+
+      float nodes = smoothstep(0.02, 0.0, length(fract(uv) - 0.5));
+
+      vec3 baseColor = mix(vec3(0.02, 0.05, 0.1), vec3(0.0, 0.0, 0.0), vUv.y);
+      vec3 circuitColor = mix(vec3(0.0, 1.0, 1.0), vec3(0.5, 0.0, 1.0), vUv.y);
+
+      float glow = 0.5 + 0.5 * sin(uTime * 2.0 + uv.x * 5.0);
+
+      vec3 color = baseColor + circuitColor * (lines + nodes) * glow;
+
+      gl_FragColor = vec4(color, 1.0);
     }
   `;
 
@@ -123,14 +148,6 @@ function initHeroShaderWithSphere() {
   const light = new THREE.PointLight(0xffffff, 1);
   light.position.set(5, 5, 5);
   scene.add(light);
-
-  // Movimiento de cámara con el mouse
-  document.addEventListener('mousemove', (e) => {
-    uniforms.uMouse.value.x = e.clientX / window.innerWidth;
-    uniforms.uMouse.value.y = 1.0 - e.clientY / window.innerHeight;
-    camera.position.x = (uniforms.uMouse.value.x - 0.5) * 0.5;
-    camera.position.y = (uniforms.uMouse.value.y - 0.5) * 0.5;
-  });
 
   const clock = new THREE.Clock();
 
@@ -180,10 +197,4 @@ function initFeaturedParallax() {
 
     function reset() {
       targetX = targetY = 0;
-      img.style.transform = "scale(1) translate(0, 0)";
-    }
-
-    img.addEventListener("mousemove", onMove);
-    img.addEventListener("mouseleave", reset);
-  });
-}
+     
