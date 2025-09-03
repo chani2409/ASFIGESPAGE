@@ -1,14 +1,27 @@
 /* =========================
-   Variables y base
+   Variables y sistema base
 ========================= */
 :root {
+  /* Colores base */
   --bg-deep-1: #0f172a;
   --bg-deep-2: #1e293b;
   --accent-teal: #2dd4bf;
   --accent-sky: #38bdf8;
   --accent-violet: #a855f7;
+
+  /* Tipografía */
+  --font-base: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-display: 'Orbitron', system-ui, sans-serif;
+
+  /* Tamaños y radios */
   --cursor-size: 10px;
   --halo-size: 36px;
+  --radius-lg: 1rem;
+
+  /* Z-index system */
+  --z-header: 50;
+  --z-overlay: 100;
+  --z-cursor: 10000;
 
   /* Variables animables para parallax del fondo */
   --g1-x: 20%;
@@ -25,15 +38,17 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: var(--font-base);
   background: linear-gradient(135deg, var(--bg-deep-1), var(--bg-deep-2));
   background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
   color: #fff;
   overflow-x: hidden;
   position: relative;
 }
 
-.font-display { font-family: 'Orbitron', system-ui, sans-serif; }
+.font-display { font-family: var(--font-display); }
 
 /* Capa de gradientes animada con variables para parallax */
 body::before {
@@ -42,10 +57,11 @@ body::before {
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(circle at var(--g1-x) var(--g1-y), rgba(45,212,191, var(--bg-opacity)), transparent 70%),
-    radial-gradient(circle at var(--g2-x) var(--g2-y), rgba(56,189,248, var(--bg-opacity)), transparent 70%);
+    radial-gradient(circle at var(--g1-x) var(--g1-y), rgba(45,212,191,var(--bg-opacity)), transparent 70%),
+    radial-gradient(circle at var(--g2-x) var(--g2-y), rgba(56,189,248,var(--bg-opacity)), transparent 70%);
   animation: pulseBackground 12s ease-in-out infinite alternate;
   will-change: opacity, transform;
+  background-repeat: no-repeat;
 }
 
 /* =========================
@@ -67,17 +83,18 @@ body::before {
 
 .hero-title {
   text-shadow: 0 0 15px rgba(45, 212, 191, 0.6);
-  animation: fadeInUp 1.2s ease both;
+  animation: asf-fadeInUp 1.2s ease both;
+  font-size: clamp(2rem, 5vw, 4rem);
 }
 
 .hero-subcopy {
-  animation: fadeInUp 1.5s ease both;
+  animation: asf-fadeInUp 1.5s ease both;
   animation-delay: 0.2s;
 }
 
 /* Indicador scroll */
 #hero .animate-bounce {
-  animation: bounceGlow 1.5s infinite;
+  animation: asf-bounceGlow 1.5s infinite;
 }
 
 /* =========================
@@ -88,12 +105,12 @@ body::before {
   to   { opacity: 1;   transform: scale(1.06); }
 }
 
-@keyframes fadeInUp {
+@keyframes asf-fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes bounceGlow {
+@keyframes asf-bounceGlow {
   0%, 100% { transform: translateY(0); box-shadow: 0 0 6px rgba(45, 212, 191, 0.8); }
   50%      { transform: translateY(6px); box-shadow: 0 0 12px rgba(45, 212, 191, 1); }
 }
@@ -103,6 +120,9 @@ body::before {
 ========================= */
 .featured-card img {
   transition: transform 0.6s ease, filter 0.4s ease;
+  will-change: transform, filter;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 .featured-card:hover img {
   transform: scale(1.08);
@@ -134,22 +154,34 @@ footer a:hover {
    Cursor neón
 ========================= */
 body.cursor-enabled { cursor: none; }
+
 .cursor, .cursor-halo {
-  position: fixed; left: 0; top: 0; pointer-events: none; z-index: 10000;
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: var(--z-cursor);
   transform: translate3d(-50%, -50%, 0);
 }
+
 .cursor {
-  width: var(--cursor-size); height: var(--cursor-size);
-  background: var(--accent-teal); border-radius: 50%; box-shadow: 0 0 8px var(--accent-teal);
-  transition: opacity 0.2s ease;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  background: var(--accent-teal);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-teal);
+  transition: opacity 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
+
 .cursor-halo {
-  width: var(--halo-size); height: var(--halo-size);
+  width: var(--halo-size);
+  height: var(--halo-size);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(45,212,191,0.18) 0%, rgba(45,212,191,0) 60%);
   filter: blur(2px);
   transition: transform 0.15s ease, opacity 0.2s ease;
 }
+
 .cursor.is-active {
   box-shadow: 0 0 16px var(--accent-sky);
   background: var(--accent-sky);
@@ -165,7 +197,7 @@ body.cursor-enabled { cursor: none; }
    Responsive tweaks
 ========================= */
 @media (max-width: 640px) {
-  .hero-title span { font-size: 2.5rem; }
+  .hero-title { font-size: clamp(2rem, 8vw, 2.5rem); }
 }
 
 /* =========================
