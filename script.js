@@ -1,178 +1,105 @@
 // ==============================
-// main.js - ASFIGES Portfolio
+// main.js - ASFIGES Portfolio Optimizado
 // ==============================
 
 // Inicialización
-const init = () => {
-  setYear();
-  initAnimations();
+window.addEventListener("DOMContentLoaded", () => {
+  // Hero scene
   initHeroScene();
+  // Animaciones GSAP
+  initScrollAnimations();
+  // Cursor
   initCursor();
-};
-
-// Año dinámico en footer
-const setYear = () => {
-  const el = document.getElementById("year");
-  if (el) el.textContent = new Date().getFullYear();
-};
+  // Año footer
+  document.getElementById("year").textContent = new Date().getFullYear();
+});
 
 // ==============================
-// Animaciones con GSAP + ScrollTrigger
+// HERO con Three.js
 // ==============================
-const initAnimations = () => {
-  if (!window.gsap || !window.ScrollTrigger) return;
+function initHeroScene() {
+  const canvas = document.getElementById("hero-canvas");
+  if (!canvas) return;
 
-  gsap.registerPlugin(ScrollTrigger);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // Títulos de sección
-  gsap.utils.toArray(".section-title").forEach((title) => {
-    gsap.from(title, {
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: title,
-        start: "top 80%",
-      },
-    });
+  const geometry = new THREE.IcosahedronGeometry(2.5, 2);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x2dd4bf,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.6,
   });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
 
-  // Secciones completas
-  gsap.utils.toArray("section").forEach((section) => {
-    gsap.from(section, {
-      opacity: 0,
-      y: 80,
-      duration: 1.2,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: section,
-        start: "top 85%",
-      },
-    });
-  });
+  const pointLight = new THREE.PointLight(0x2dd4bf, 2, 100);
+  pointLight.position.set(5, 5, 5);
+  scene.add(pointLight);
+  camera.position.z = 6;
 
-  // Hero principal
-  gsap.from(".hero-title", {
-    opacity: 0,
-    y: -50,
-    duration: 1.2,
-    ease: "power3.out",
-  });
-
-  gsap.from(".hero-subcopy", {
-    opacity: 0,
-    y: 30,
-    delay: 0.3,
-    duration: 1,
-    ease: "power3.out",
-  });
-};
-
-// ==============================
-// Escena Hero con Three.js
-// ==============================
-const initHeroScene = () => {
-  const heroCanvas = document.getElementById('hero-canvas');
-  if (!heroCanvas || !window.THREE) return;
-
-  const { Scene, PerspectiveCamera, WebGLRenderer, TorusKnotGeometry, SphereGeometry,
-          MeshBasicMaterial, Mesh, AdditiveBlending, BufferGeometry, BufferAttribute,
-          ShaderMaterial, Clock } = THREE;
-
-  // Escena
-  const scene = new Scene();
-  const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 8;
-
-  const renderer = new WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  // Geometría 3D principal: toroide wireframe
-  const torus = new Mesh(
-    new TorusKnotGeometry(2, 0.5, 128, 32),
-    new MeshBasicMaterial({ color: 0x2dd4bf, wireframe: true, transparent: true, opacity: 0.6 })
-  );
-  scene.add(torus);
-
-  // Esfera central glow
-  const sphere = new Mesh(
-    new SphereGeometry(1.2, 64, 64),
-    new MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.3 })
-  );
-  scene.add(sphere);
-
-  // Partículas
-  const particleCount = 2000;
-  const positions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 40;
-  }
-  const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new BufferAttribute(positions, 3));
-  const material = new ShaderMaterial({
-    uniforms: { time: { value: 0 } },
-    vertexShader: `
-      uniform float time;
-      void main() {
-        vec3 pos = position;
-        pos.y += sin(time + pos.x * 0.2) * 0.3;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = 2.0;
-      }
-    `,
-    fragmentShader: `void main() { gl_FragColor = vec4(0.18, 0.82, 0.74, 1.0); }`,
-    blending: AdditiveBlending,
-    transparent: true
-  });
-  scene.add(new THREE.Points(geometry, material));
-
-  // Animación
-  const clock = new Clock();
   const animate = () => {
-    requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-
-    torus.rotation.x = t * 0.2;
-    torus.rotation.y = t * 0.3;
-    material.uniforms.time.value = t;
-
+    mesh.rotation.x += 0.002;
+    mesh.rotation.y += 0.004;
     renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   };
   animate();
 
-  // Resize
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  window.addEventListener("resize", () => {
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   });
-};
+}
 
-// Ejecutar al cargar
-document.addEventListener('DOMContentLoaded', initHeroScene);
+// ==============================
+// GSAP Scroll Animations
+// ==============================
+function initScrollAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
 
+  gsap.utils.toArray(".section-title").forEach((el) => {
+    gsap.from(el, {
+      scrollTrigger: { trigger: el, start: "top 85%" },
+      y: 40,
+      opacity: 0,
+      duration: 0.9,
+      ease: "power2.out",
+    });
+  });
 
+  gsap.utils.toArray(".featured-card, .p-6").forEach((card) => {
+    gsap.from(card, {
+      scrollTrigger: { trigger: card, start: "top 90%" },
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.out",
+    });
+  });
+}
 
 // ==============================
 // Cursor personalizado
 // ==============================
-const initCursor = () => {
+function initCursor() {
   const cursor = document.querySelector(".cursor");
   const halo = document.querySelector(".cursor-halo");
-
   if (!cursor || !halo) return;
 
-  document.addEventListener("mousemove", (e) => {
-    cursor.style.left = `${e.clientX}px`;
+  window.addEventListener("mousemove", (e) => {
     cursor.style.top = `${e.clientY}px`;
-    halo.style.left = `${e.clientX}px`;
+    cursor.style.left = `${e.clientX}px`;
     halo.style.top = `${e.clientY}px`;
+    halo.style.left = `${e.clientX}px`;
   });
 
-  // Elementos interactivos que activan cursor
-  document.querySelectorAll("a, button, input, textarea").forEach((el) => {
+  document.querySelectorAll("a, button, .featured-card, .p-6").forEach((el) => {
     el.addEventListener("mouseenter", () => {
       cursor.classList.add("is-active");
       halo.classList.add("is-active");
@@ -182,13 +109,4 @@ const initCursor = () => {
       halo.classList.remove("is-active");
     });
   });
-};
-
-// ==============================
-// Iniciar cuando DOM está listo
-// ==============================
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
 }
