@@ -281,3 +281,44 @@ body.cursor-enabled { cursor: none; }
   height: 100%;
   mix-blend-mode: screen;
 }
+/* =========================
+   Mejoras y nuevas secciones
+========================= */
+.section-title {
+  text-shadow: 0 0 15px rgba(45, 212, 191, 0.6);
+}
+
+.featured-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+.featured-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .7s ease;
+}
+.featured-card:hover img {
+  transform: scale(1.1);
+}
+.featured-card .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .4s ease;
+}
+.featured-card:hover .overlay {
+  opacity: 1;
+}
+.featured-card .overlay span {
+  font-size: 1.25rem;
+  color: var(--accent-teal);
+  font-weight: bold;
+}
+
