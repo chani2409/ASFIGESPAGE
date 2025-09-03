@@ -16,6 +16,10 @@
   --g2-x: 80%;
   --g2-y: 70%;
   --bg-opacity: 0.08;
+
+  /* Variables para hero reactivo */
+  --particle-color: var(--accent-teal);
+  --particle-size: 0.05;
 }
 
 html { scroll-behavior: smooth; }
@@ -44,19 +48,41 @@ body::before {
   will-change: opacity, transform;
 }
 
-/* Hero Canvas (fondo 3D) */
+/* =========================
+   HERO CINEMÁTICO REACTIVO
+========================= */
+#hero {
+  position: relative;
+  overflow: hidden;
+}
+
 #hero-canvas canvas {
   width: 100% !important;
   height: 100% !important;
   display: block;
   mix-blend-mode: screen;
   opacity: 0.9;
+  will-change: transform, opacity;
 }
 
-/* Hero text */
-.hero-title { text-shadow: 0 0 15px rgba(45, 212, 191, 0.6); }
-.hero-subcopy { animation: fadeInUp 1.2s ease both; }
+.hero-title {
+  text-shadow: 0 0 15px rgba(45, 212, 191, 0.6);
+  animation: fadeInUp 1.2s ease both;
+}
 
+.hero-subcopy {
+  animation: fadeInUp 1.5s ease both;
+  animation-delay: 0.2s;
+}
+
+/* Indicador scroll */
+#hero .animate-bounce {
+  animation: bounceGlow 1.5s infinite;
+}
+
+/* =========================
+   Animaciones clave
+========================= */
 @keyframes pulseBackground {
   from { opacity: 0.5; transform: scale(1); }
   to   { opacity: 1;   transform: scale(1.06); }
@@ -67,29 +93,46 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Indicador scroll */
-#hero .animate-bounce {
-  animation: bounceGlow 1.5s infinite;
-}
-
 @keyframes bounceGlow {
   0%, 100% { transform: translateY(0); box-shadow: 0 0 6px rgba(45, 212, 191, 0.8); }
   50%      { transform: translateY(6px); box-shadow: 0 0 12px rgba(45, 212, 191, 1); }
 }
 
-/* Featured cards */
-.featured-card img { transition: transform 0.6s ease, filter 0.4s ease; }
-.featured-card:hover img { transform: scale(1.08); filter: brightness(1.1); }
-.featured-card span { text-shadow: 0 0 10px rgba(45, 212, 191, 0.9); }
+/* =========================
+   Featured cards
+========================= */
+.featured-card img {
+  transition: transform 0.6s ease, filter 0.4s ease;
+}
+.featured-card:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+}
+.featured-card span {
+  text-shadow: 0 0 10px rgba(45, 212, 191, 0.9);
+}
 
-/* About image depth */
-#about img { box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
+/* =========================
+   About image depth
+========================= */
+#about img {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
 
-/* Footer */
-footer { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(6px); }
-footer a:hover { text-decoration: underline; }
+/* =========================
+   Footer
+========================= */
+footer {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(6px);
+}
+footer a:hover {
+  text-decoration: underline;
+}
 
-/* Cursor neón */
+/* =========================
+   Cursor neón
+========================= */
 body.cursor-enabled { cursor: none; }
 .cursor, .cursor-halo {
   position: fixed; left: 0; top: 0; pointer-events: none; z-index: 10000;
@@ -107,18 +150,27 @@ body.cursor-enabled { cursor: none; }
   filter: blur(2px);
   transition: transform 0.15s ease, opacity 0.2s ease;
 }
-.cursor.is-active { box-shadow: 0 0 16px var(--accent-sky); background: var(--accent-sky); }
-.cursor-halo.is-active { transform: translate3d(-50%, -50%, 0) scale(1.25); }
+.cursor.is-active {
+  box-shadow: 0 0 16px var(--accent-sky);
+  background: var(--accent-sky);
+}
+.cursor-halo.is-active {
+  transform: translate3d(-50%, -50%, 0) scale(1.25);
+}
 
 /* Magnetic targets visual hint (opcional) */
 [data-magnetic] { position: relative; }
 
-/* Responsive tweaks */
+/* =========================
+   Responsive tweaks
+========================= */
 @media (max-width: 640px) {
   .hero-title span { font-size: 2.5rem; }
 }
 
-/* Accesibilidad: reduce motion */
+/* =========================
+   Accesibilidad: reduce motion
+========================= */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   body::before { animation: none !important; }
