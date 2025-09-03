@@ -76,11 +76,11 @@ const initHeroScene = () => {
   const heroCanvas = document.getElementById('hero-canvas');
   if (!heroCanvas || !window.THREE) return;
 
-  const { Scene, PerspectiveCamera, WebGLRenderer, Color,
-          TorusKnotGeometry, SphereGeometry, MeshBasicMaterial, Mesh,
-          AdditiveBlending, Points, BufferGeometry, BufferAttribute, ShaderMaterial, Vector3, Clock } = THREE;
+  const { Scene, PerspectiveCamera, WebGLRenderer, TorusKnotGeometry, SphereGeometry,
+          MeshBasicMaterial, Mesh, AdditiveBlending, BufferGeometry, BufferAttribute,
+          ShaderMaterial, Clock } = THREE;
 
-  // Escena y cámara
+  // Escena
   const scene = new Scene();
   const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 8;
@@ -89,7 +89,7 @@ const initHeroScene = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  // Geometría 3D: un toroide
+  // Geometría 3D principal: toroide wireframe
   const torus = new Mesh(
     new TorusKnotGeometry(2, 0.5, 128, 32),
     new MeshBasicMaterial({ color: 0x2dd4bf, wireframe: true, transparent: true, opacity: 0.6 })
@@ -103,7 +103,7 @@ const initHeroScene = () => {
   );
   scene.add(sphere);
 
-  // Partículas alrededor
+  // Partículas
   const particleCount = 2000;
   const positions = new Float32Array(particleCount * 3);
   for (let i = 0; i < particleCount * 3; i++) {
@@ -126,7 +126,7 @@ const initHeroScene = () => {
     blending: AdditiveBlending,
     transparent: true
   });
-  scene.add(new Points(geometry, material));
+  scene.add(new THREE.Points(geometry, material));
 
   // Animación
   const clock = new Clock();
@@ -136,7 +136,6 @@ const initHeroScene = () => {
 
     torus.rotation.x = t * 0.2;
     torus.rotation.y = t * 0.3;
-
     material.uniforms.time.value = t;
 
     renderer.render(scene, camera);
@@ -150,6 +149,10 @@ const initHeroScene = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 };
+
+// Ejecutar al cargar
+document.addEventListener('DOMContentLoaded', initHeroScene);
+
 
 
 // ==============================
