@@ -73,51 +73,84 @@ const initAnimations = () => {
 // Escena Hero con Three.js
 // ==============================
 const initHeroScene = () => {
-  const canvas = document.getElementById("hero-canvas");
-  if (!canvas || !window.THREE) return;
+  const heroCanvas = document.getElementById('hero-canvas');
+  if (!heroCanvas || !window.THREE) return;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 3;
+  const { Scene, PerspectiveCamera, WebGLRenderer, Color,
+          TorusKnotGeometry, SphereGeometry, MeshBasicMaterial, Mesh,
+          AdditiveBlending, Points, BufferGeometry, BufferAttribute, ShaderMaterial, Vector3, Clock } = THREE;
 
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    alpha: true,
-    antialias: true,
-  });
+  // Escena y cámara
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 8;
+
+  const renderer = new WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  // Cubo simple con material wireframe
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x2dd4bf,
-    wireframe: true,
-  });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  // Geometría 3D: un toroide
+  const torus = new Mesh(
+    new TorusKnotGeometry(2, 0.5, 128, 32),
+    new MeshBasicMaterial({ color: 0x2dd4bf, wireframe: true, transparent: true, opacity: 0.6 })
+  );
+  scene.add(torus);
 
-  // Animación del cubo
+  // Esfera central glow
+  const sphere = new Mesh(
+    new SphereGeometry(1.2, 64, 64),
+    new MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.3 })
+  );
+  scene.add(sphere);
+
+  // Partículas alrededor
+  const particleCount = 2000;
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount * 3; i++) {
+    positions[i] = (Math.random() - 0.5) * 40;
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(positions, 3));
+  const material = new ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader: `
+      uniform float time;
+      void main() {
+        vec3 pos = position;
+        pos.y += sin(time + pos.x * 0.2) * 0.3;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        gl_PointSize = 2.0;
+      }
+    `,
+    fragmentShader: `void main() { gl_FragColor = vec4(0.18, 0.82, 0.74, 1.0); }`,
+    blending: AdditiveBlending,
+    transparent: true
+  });
+  scene.add(new Points(geometry, material));
+
+  // Animación
+  const clock = new Clock();
   const animate = () => {
     requestAnimationFrame(animate);
-    cube.rotation.x += 0.002;
-    cube.rotation.y += 0.003;
+    const t = clock.getElapsedTime();
+
+    torus.rotation.x = t * 0.2;
+    torus.rotation.y = t * 0.3;
+
+    material.uniforms.time.value = t;
+
     renderer.render(scene, camera);
   };
   animate();
 
-  // Ajuste en resize
-  window.addEventListener("resize", () => {
+  // Resize
+  window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 };
+
 
 // ==============================
 // Cursor personalizado
