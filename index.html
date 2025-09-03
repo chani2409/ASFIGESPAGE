@@ -15,17 +15,21 @@
   <!-- Tailwind (prototipado) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- GSAP (animaciones) -->
+  <!-- GSAP -->
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
   <!-- Estilos -->
   <link rel="stylesheet" href="./style.css" />
 
-  <!-- App JS (se añadirá luego) -->
+  <!-- App JS -->
   <script type="module" src="./js/main.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans relative antialiased">
+
   <!-- Header -->
   <header class="p-4 bg-gray-800/80 fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur">
     <nav class="max-w-6xl mx-auto flex justify-between items-center" aria-label="Navegación principal">
@@ -41,21 +45,18 @@
   </header>
 
   <main id="main" class="pt-20">
-    <!-- Hero -->
-    <section id="hero" class="h-[100svh] flex flex-col items-center justify-center relative overflow-hidden">
-      <!-- Canvas de Three.js -->
+
+    <!-- Hero Cinemático Reactivo -->
+    <section id="hero" class="h-[100svh] flex items-center justify-center relative overflow-hidden">
+      <!-- Canvas Three.js -->
       <div id="hero-canvas" class="absolute inset-0 -z-10"></div>
-      <!-- Fallback estático (definido en CSS) -->
-      <div class="hero-fallback absolute inset-0 -z-20 opacity-40" aria-hidden="true"></div>
 
       <!-- Contenido -->
-      <div class="text-center px-4 relative z-10">
-        <h1 class="font-extrabold mb-4 tracking-tight hero-title">
-          <span class="block text-5xl sm:text-6xl font-display">ASFIGES</span>
+      <div class="text-center relative z-10">
+        <h1 class="font-display text-5xl sm:text-6xl font-extrabold text-teal-400 hero-title">
+          ASFIGES
         </h1>
-        <p class="text-lg text-white/70 max-w-xl mx-auto hero-subcopy">
-          Creamos experiencias digitales que conectan con tu audiencia.
-        </p>
+        <p class="mt-4 text-lg text-white/70">Experiencias digitales inmersivas</p>
       </div>
 
       <!-- Indicador de scroll -->
@@ -72,39 +73,19 @@
       <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center section-title">Featured Work</h2>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <article class="featured-card relative overflow-hidden rounded-lg group cursor-pointer will-change-transform">
-          <img
-            src="https://picsum.photos/800/600?random=21"
-            alt="Interfaz interactiva 1"
-            class="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+          <img src="https://picsum.photos/800/600?random=21" alt="Interfaz interactiva 1" class="w-full h-full object-cover" loading="lazy" decoding="async" />
           <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 1</span>
           </div>
         </article>
-
         <article class="featured-card relative overflow-hidden rounded-lg group cursor-pointer will-change-transform">
-          <img
-            src="https://picsum.photos/800/600?random=22"
-            alt="Entorno WebGL 2"
-            class="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+          <img src="https://picsum.photos/800/600?random=22" alt="Entorno WebGL 2" class="w-full h-full object-cover" loading="lazy" decoding="async" />
           <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 2</span>
           </div>
         </article>
-
         <article class="featured-card relative overflow-hidden rounded-lg group cursor-pointer will-change-transform">
-          <img
-            src="https://picsum.photos/800/600?random=23"
-            alt="Experiencia inmersiva 3"
-            class="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+          <img src="https://picsum.photos/800/600?random=23" alt="Experiencia inmersiva 3" class="w-full h-full object-cover" loading="lazy" decoding="async" />
           <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <span class="text-lg font-semibold text-teal-400">Proyecto 3</span>
           </div>
@@ -123,15 +104,8 @@
           Desde interfaces interactivas hasta entornos WebGL, diseñamos productos que se sienten vivos.
         </p>
       </div>
-
       <div class="relative group">
-        <img
-          src="https://picsum.photos/800/600?random=30"
-          alt="Imagen del estudio"
-          class="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105 will-change-transform"
-          loading="lazy"
-          decoding="async"
-        />
+        <img src="https://picsum.photos/800/600?random=30" alt="Imagen del estudio" class="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
         <div class="absolute inset-0 bg-teal-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
       </div>
     </section>
@@ -144,38 +118,10 @@
         <span class="font-extrabold text-teal-400 text-lg tracking-wide">ASFIGES</span>
         <p class="text-white/60 mt-2 text-sm">Creando experiencias digitales inmersivas.</p>
       </div>
-
       <nav class="flex flex-col space-y-2 text-sm" aria-label="Enlaces del sitio">
         <a href="#hero" class="hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">Inicio</a>
         <a href="#featured" class="hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">Proyectos</a>
         <a href="#about" class="hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">Sobre nosotros</a>
       </nav>
-
       <div class="flex space-x-4 justify-start md:justify-end">
-        <a href="#" aria-label="Twitter" class="text-white/60 hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">Twitter</a>
-        <a href="#" aria-label="Instagram" class="text-white/60 hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">Instagram</a>
-        <a href="#" aria-label="LinkedIn" class="text-white/60 hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">LinkedIn</a>
-      </div>
-    </div>
-
-    <div class="mt-8 text-center text-xs text-white/50">
-      © <span id="year"></span> Estudio Creativo. Todos los derechos reservados.
-    </div>
-  </footer>
-
-  <!-- No-JS notice -->
-  <noscript>
-    <div class="fixed inset-x-0 bottom-0 bg-red-600 text-white text-center py-2 text-sm z-50">
-      Activa JavaScript para ver las animaciones e interacciones.
-    </div>
-  </noscript>
-
-  <!-- Año dinámico (fallback mientras integras JS) -->
-  <script>
-    (function () {
-      var y = document.getElementById('year');
-      if (y) y.textContent = new Date().getFullYear();
-    })();
-  </script>
-</body>
-</html>
+        <a href="#" aria-label="Twitter" class="text-white/60 hover:text-teal-400 transition focus:outline-none focus:ring-2 focus:ring-teal-400 rounded">
