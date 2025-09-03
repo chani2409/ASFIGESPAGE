@@ -8,7 +8,6 @@
 // Manejo centralizado de errores
 const logError = (context, err) => {
   console.error(`[ASFIGES] Error en ${context}:`, err);
-  // Aquí podrías enviar a un servicio de monitoreo si lo deseas
 };
 
 // Helper para observar visibilidad de elementos
@@ -21,13 +20,6 @@ const observeVisibility = (el, onEnter, onLeave, threshold = 0.1) => {
   return io;
 };
 
-// Helper para setear variables CSS dinámicamente
-const setThemeVars = vars => {
-  Object.entries(vars).forEach(([key, val]) => {
-    document.documentElement.style.setProperty(`--${key}`, val);
-  });
-};
-
 // ----------------------
 // Funciones principales
 // ----------------------
@@ -37,95 +29,218 @@ const setYear = () => {
   if (el) el.textContent = new Date().getFullYear();
 };
 
-const initCursor = async () => {
-  try {
-    const { initCursor } = await import('./cursor.js');
-    initCursor();
-  } catch (err) {
-    logError('cursor', err);
+const initAnimations = () => {
+  // Asegúrate de que GSAP y ScrollTrigger estén cargados
+  if (!window.gsap || !window.ScrollTrigger) {
+    logError('Animations', 'GSAP o ScrollTrigger no están cargados.');
+    return;
   }
+
+  // Animación del título y subtítulo del Hero
+  gsap.fromTo('.hero-title', {
+    opacity: 0,
+    y: 40,
+  }, {
+    opacity: 1,
+    y: 0,
+    duration: 1.2,
+    ease: 'power3.out',
+    delay: 0.5,
+  });
+
+  gsap.fromTo('#hero p', {
+    opacity: 0,
+    y: 20,
+  }, {
+    opacity: 1,
+    y: 0,
+    duration: 1,
+    delay: 0.8,
+    ease: 'power3.out',
+  });
+
+  // Animaciones de scroll para la sección Featured
+  gsap.fromTo('.section-title', {
+    opacity: 0,
+    y: 50,
+    filter: 'blur(10px)',
+  }, {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 1.2,
+    ease: 'power4.out',
+    scrollTrigger: {
+      trigger: '#featured',
+      start: 'top 80%',
+    },
+  });
+
+  gsap.fromTo('.featured-card', {
+    opacity: 0,
+    y: 30,
+  }, {
+    opacity: 1,
+    y: 0,
+    duration: 1,
+    stagger: 0.2,
+    scrollTrigger: {
+      trigger: '#featured',
+      start: 'top 70%',
+    },
+  });
 };
 
-const initAnimations = async () => {
-  try {
-    const { initAnimations } = await import('./animations.js');
-    initAnimations();
-  } catch (err) {
-    logError('animations', err);
-  }
-};
-
-const initHero = async () => {
+const initHeroScene = async () => {
   const heroCanvas = document.getElementById('hero-canvas');
   if (!heroCanvas) return;
+  if (!window.THREE) {
+    logError('Hero 3D', 'Three.js no está cargado.');
+    return;
+  }
 
-  try {
-    const { initHeroScene } = await import('./hero.js');
-    const controller = initHeroScene(heroCanvas);
+  const {
+    WebGLRenderer, Scene, PerspectiveCamera, Points, BufferGeometry, BufferAttribute, ShaderMaterial,
+    AdditiveBlending, Vector2, Color, Clock
+  } = THREE;
 
-    // Animaciones de entrada con GSAP
-    if (window.gsap) {
-      gsap.fromTo('.hero-title',
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }
-      );
-      gsap.fromTo('#hero p',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' }
-      );
+  // Escena, cámara y renderizador
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+
+  const renderer = new WebGLRenderer({
+    canvas: heroCanvas,
+    alpha: true,
+    antialias: true
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  // Shaders para las partículas
+  const vertexShader = `
+    uniform float time;
+    uniform float scrollProgress;
+    uniform vec2 mouse;
+    attribute float size;
+    attribute vec3 color;
+    varying vec3 vColor;
+    void main() {
+      vColor = color;
+      vec3 newPosition = position;
+      newPosition.z += scrollProgress * 100.0;
+      newPosition.x += sin(newPosition.z * 0.1 + time * 0.5) * 2.0;
+      newPosition.y += cos(newPosition.z * 0.1 + time * 0.5) * 2.0;
+      float dist = length(newPosition.xy - mouse);
+      if (dist < 10.0) {
+        newPosition += normalize(newPosition.xy - mouse) * (1.0 - dist / 10.0) * 5.0;
+      }
+      vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+      gl_PointSize = size * (300.0 / -mvPosition.z);
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `;
+
+  const fragmentShader = `
+    varying vec3 vColor;
+    void main() {
+      float strength = distance(gl_PointCoord, vec2(0.5));
+      gl_FragColor = vec4(vColor, 1.0 - strength * 2.0);
+    }
+  `;
+
+  // Geometría y material de las partículas
+  const particleCount = 20000;
+  const geometry = new BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+
+  const color1 = new Color('#00ffff');
+  const color2 = new Color('#ff00ff');
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3 + 0] = (Math.random() - 0.5) * 200;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+    positions[i * 3 + 2] = Math.random() * -200;
+    
+    const mixedColor = new Color().lerpColors(color1, color2, Math.random());
+    colors[i * 3 + 0] = mixedColor.r;
+    colors[i * 3 + 1] = mixedColor.g;
+    colors[i * 3 + 2] = mixedColor.b;
+    
+    sizes[i] = Math.random() * 2 + 0.5;
+  }
+
+  geometry.setAttribute('position', new BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new BufferAttribute(colors, 3));
+  geometry.setAttribute('size', new BufferAttribute(sizes, 1));
+
+  const material = new ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      time: { value: 0 },
+      scrollProgress: { value: 0 },
+      mouse: { value: new Vector2() },
+    },
+    blending: AdditiveBlending,
+    depthWrite: false,
+    transparent: true,
+    vertexColors: true,
+  });
+
+  const points = new Points(geometry, material);
+  scene.add(points);
+
+  // Animación y eventos
+  const clock = new Clock();
+  let mouse = new Vector2();
+  let isRendering = true;
+
+  const animate = () => {
+    if (isRendering) {
+      requestAnimationFrame(animate);
     }
 
-    // Pausar/reanudar según visibilidad
-    observeVisibility(
-      document.getElementById('hero'),
-      () => controller.resume(),
-      () => controller.pause()
-    );
+    material.uniforms.time.value = clock.getElapsedTime();
+    material.uniforms.mouse.value.lerp(mouse, 0.1);
+    renderer.render(scene, camera);
+  };
+  animate();
 
-    // Cambiar color de partículas al pasar sobre el título
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-      heroTitle.addEventListener('mouseenter', () => {
-        setThemeVars({ 'particle-color': 'var(--accent-sky)' });
-        controller.setParticleColor(0x38bdf8);
-      });
-      heroTitle.addEventListener('mouseleave', () => {
-        setThemeVars({ 'particle-color': 'var(--accent-teal)' });
-        controller.setParticleColor(0x2dd4bf);
-      });
-    }
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 
-  } catch (err) {
-    logError('Hero 3D', err);
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
+
+  // Conectar con GSAP ScrollTrigger
+  if (window.gsap && window.ScrollTrigger) {
+    ScrollTrigger.create({
+      trigger: '#main',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1,
+      onUpdate: self => {
+        material.uniforms.scrollProgress.value = self.progress;
+      },
+    });
   }
 };
 
 // ----------------------
 // Inicialización global
 // ----------------------
-
-const init = async () => {
+const init = () => {
   setYear();
-
-  // Detectar si es dispositivo táctil
-  const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
-  if (!isTouch) document.body.classList.add('cursor-enabled');
-
-  // Cargar módulos en paralelo
-  const tasks = [];
-
-  // Cursor neón solo en desktop (carga diferida para no bloquear)
-  if (!isTouch) {
-    requestIdleCallback(() => initCursor());
-  }
-
-  // Animaciones GSAP globales
-  tasks.push(initAnimations());
-
-  // Hero Cinemático Reactivo
-  tasks.push(initHero());
-
-  await Promise.allSettled(tasks);
+  initAnimations();
+  initHeroScene();
 };
 
 // Ejecutar cuando el DOM esté listo
