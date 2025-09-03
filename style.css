@@ -10,6 +10,7 @@ body {
   color: #fff;
   overflow-x: hidden;
   position: relative;
+  cursor: none;
 }
 
 /* Gradiente animado */
@@ -84,7 +85,40 @@ footer {
 }
 footer a:hover { text-decoration: underline; }
 
+/* Cursor personalizado */
+.cursor, .cursor-halo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  transition: transform 0.15s ease, background 0.3s ease, opacity 0.3s ease;
+}
+.cursor {
+  width: 8px;
+  height: 8px;
+  background: #2dd4bf;
+  border-radius: 50%;
+}
+.cursor-halo {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(45, 212, 191, 0.5);
+  border-radius: 50%;
+}
+.cursor.is-active {
+  transform: translate(-50%, -50%) scale(1.5);
+}
+.cursor-halo.is-active {
+  border-color: rgba(45, 212, 191, 1);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   #hero h1 { font-size: 2.5rem; }
+  #featured .grid, #blog .grid, #testimonials .grid {
+    grid-template-columns: 1fr;
+  }
 }
